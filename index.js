@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 const bot = new Discord.Client()
-const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.GFJLLkYq8iCc_vBRUaUZLsbriBk'
+const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.SZadlYhxEWE9wsJtvLz7DK9Xv9k'
 bot.login(token)
 
 bot.on('ready', _ => {
@@ -46,11 +46,17 @@ processKeepRollPlus = (roll, keep, plus) => {
     return [roll, keep, plus, changed]
 }
 
-throwDices = (roll, keep, plus) => {
+throwDices = (roll, keep, plus, hasEmphasis) => {
     let values = []
     for(let i=0; i<roll; i++){
         let value = Math.floor(Math.random() * 10) + 1
         let dice = value
+
+        if(hasEmphasis && dice === 1){
+            value = Math.floor(Math.random() * 10) + 1
+            dice = value
+        }
+
         while(value === 10){
             value = Math.floor(Math.random() * 10) + 1
             dice += value
@@ -95,9 +101,13 @@ validate = content => {
             resp += numbers[0] + 'k' + numbers[1] + '+' + numbers[2] + '\n'
         }
     }
-    [values, result] = throwDices(numbers[0], numbers[1], numbers[2])
+    let hasEmphasis = false
+    if(content.includes('e')){
+        hasEmphasis = true
+    }
+    [values, result] = throwDices(numbers[0], numbers[1], numbers[2], hasEmphasis)
     resp += values + '\n'
-    resp += 'Resultado: '+ result
+    resp += 'Resultado novo: '+ result
     return resp
 }
 
