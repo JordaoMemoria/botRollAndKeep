@@ -107,7 +107,7 @@ validate = content => {
     }
     [values, result] = throwDices(numbers[0], numbers[1], numbers[2], hasEmphasis)
     resp += values + '\n'
-    resp += 'Resultado novo: '+ result
+    resp += 'Resultado: '+ result
     return resp
 }
 
