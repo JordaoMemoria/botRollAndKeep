@@ -1,11 +1,5 @@
 const Discord = require('discord.js')
-const bot = new Discord.Client()
-const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.SZadlYhxEWE9wsJtvLz7DK9Xv9k'
-bot.login(token)
-
-bot.on('ready', _ => {
-    console.log('Estou online')
-})
+const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.U9fEZ7KweuiSIF9wD_Q-BKBNj-s'
 
 processKeepRollPlus = (roll, keep, plus) => {
     changed = false
@@ -15,7 +9,7 @@ processKeepRollPlus = (roll, keep, plus) => {
     if(isNaN(roll) || isNaN(keep) || isNaN(plus)){
         return null
     }
-    if(roll > 10 && keep > 10){
+    if(roll >= 10 && keep >= 10){
         changed = true
         const rollAbove = roll - 10
         const keepAbove = keep - 10
@@ -46,21 +40,48 @@ processKeepRollPlus = (roll, keep, plus) => {
     return [roll, keep, plus, changed]
 }
 
-throwDices = (roll, keep, plus, hasEmphasis) => {
+rollSimpleDice = _ => {
+    const value = Math.floor(Math.random() * 10) + 1
+    // console.log(value)
+    return value
+}
+
+throwDices = (roll, keep, plus, hasEmphasis, explodeOn9, withoutSkill) => {
     let values = []
     for(let i=0; i<roll; i++){
-        let value = Math.floor(Math.random() * 10) + 1
+        let value = rollSimpleDice()
         let dice = value
 
         if(hasEmphasis && dice === 1){
-            value = Math.floor(Math.random() * 10) + 1
+            // console.log('Entrou na ênfase')
+            value = rollSimpleDice()
             dice = value
         }
 
-        while(value === 10){
-            value = Math.floor(Math.random() * 10) + 1
-            dice += value
+        if(explodeOn9){
+            while(value === 10 || value === 9){
+                // if(value === 9){
+                //     console.log('Explodiu no 9')
+                // }
+                // if(value === 10){
+                //     console.log('Explodiu no 10')
+                // }
+                value = rollSimpleDice()
+                dice += value
+            }
         }
+        else if(!withoutSkill){
+            while(value === 10){
+                // if(value === 10){
+                //     console.log('Explodiu no 10')
+                // }
+                value = rollSimpleDice()
+                dice += value
+            }
+        }
+        // if(value === 10){
+        //     console.log('Sem perícia para explodir')
+        // }
         values.push(dice)
     }
     values.sort((a, b) => {
@@ -75,7 +96,6 @@ throwDices = (roll, keep, plus, hasEmphasis) => {
 }
 
 validate = content => {
-    console.log(content)
     const s1 = content.split('k')
     if(s1.length === 1){
         return null
@@ -101,20 +121,44 @@ validate = content => {
             resp += numbers[0] + 'k' + numbers[1] + '+' + numbers[2] + '\n'
         }
     }
+    
     let hasEmphasis = false
     if(content.includes('e')){
         hasEmphasis = true
     }
-    [values, result] = throwDices(numbers[0], numbers[1], numbers[2], hasEmphasis)
+    let explodeOn9 = false
+    if(content.includes('x')){
+        explodeOn9 = true
+    }
+    let withoutSkill = false
+    if(content.includes('s')){
+        withoutSkill = true
+    }
+
+    [values, result] = throwDices(
+        numbers[0], 
+        numbers[1], 
+        numbers[2], 
+        hasEmphasis,
+        explodeOn9,
+        withoutSkill
+    )
+
     resp += values + '\n'
     resp += 'Resultado: '+ result
     return resp
 }
 
+const bot = new Discord.Client()
+bot.login(token)
+bot.on('ready', _ => {
+    console.log('[ Online ]')
+})
 bot.on('message', msg => {
     const resp = validate(msg.content)
-    if(resp === null){
-        return
+    if(resp !== null){
+        // console.log('Fim do teste')
+        msg.reply(resp)
     }
-    msg.reply(resp)
 })
+
