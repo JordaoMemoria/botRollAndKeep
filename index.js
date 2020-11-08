@@ -66,7 +66,7 @@ throwDice = (attribute, masterpiece) => {
 }
 
 showSimple = (number, dice, result, sum) => {
-    return number+'d'+dice+' > '+result+'\nResultado: '+sum
+    return number+'d'+dice+' - '+result+'\nResultado: '+sum
 }
 
 getStats = (at, dif, masterpiece) => {
