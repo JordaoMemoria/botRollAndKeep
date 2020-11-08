@@ -69,6 +69,13 @@ showSimple = (number, dice, result, sum) => {
     return number+'d'+dice+' - '+result+'\nResultado: '+sum
 }
 
+showSimple2 = (
+    number, dice, result, sum,
+    number2, dice2, result2, sum2    
+) => {
+    return number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'+number2+'d'+dice2+' - '+result2+'\nResultado: '+sum2
+}
+
 getStats = (at, dif, masterpiece) => {
     // let results = []
     let lastResult = 0
@@ -139,6 +146,13 @@ validate = content => {
             masterpiece = true
         }
         const [number, dice, result, sum] = throwDice(at,masterpiece)
+        if(content.includes('p') || content.includes('b')){
+            const [number2, dice2, result2, sum2] = throwDice(at,masterpiece)
+            return showSimple2(
+                number, dice, result, sum,
+                number2, dice2, result2, sum2
+            )
+        }
         return showSimple(number, dice, result, sum)
     }
     else if(s1.length === 2){
