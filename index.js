@@ -1,7 +1,8 @@
 const Discord = require('discord.js')
-const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.DTCghPofF4YEln_2Qo8P5vDCeeY'
-
+const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.wR9p2s7pmRT4n3ZGo2zElVWRt0M'
+const math = require('mathjs')
 const bot = new Discord.Client()
+
 bot.login(token)
 bot.on('ready', _ => {
     console.log('[Bot Online]')
@@ -90,10 +91,10 @@ throwNDices = (at, dif, masterpiece) => {
 }
 
 getStats = (at, dif, masterpiece) => {
-    // let results = []
+    let results = []
     let lastResult = 0
-    // let penalties = []
-    // let bonuses = []
+    let penalties = []
+    let bonuses = []
     let success = 0
     let successBonus = 0
     let successPenalty = 0
@@ -107,8 +108,8 @@ getStats = (at, dif, masterpiece) => {
         }
         if(i%2 !== 0){
             if(sum > lastResult){
-                // bonuses.push(sum)
-                // penalties.push(lastResult)
+                bonuses.push(sum)
+                penalties.push(lastResult)
                 if(sum >= dif){
                     successBonus++
                 }
@@ -117,8 +118,8 @@ getStats = (at, dif, masterpiece) => {
                 }
             }
             else{
-                // bonuses.push(lastResult)
-                // penalties.push(sum)
+                bonuses.push(lastResult)
+                penalties.push(sum)
                 if(lastResult >= dif){
                     successBonus++
                 }
@@ -128,20 +129,27 @@ getStats = (at, dif, masterpiece) => {
             }
         }
         lastResult = sum
-        // results.push(sum)
+        results.push(sum)
     }
-    // console.log(penalties)
-    // console.log(results)
-    // console.log(bonuses)
     return [
-        (successPenalty/(times/2) * 100).toFixed(2),
-        (success/times * 100).toFixed(2),
-        (successBonus/(times/2) * 100).toFixed(2)
+        (successPenalty/(times/2)*100).toFixed(2), 
+            math.mean(penalties).toFixed(2), 
+            math.std(penalties).toFixed(2),
+        (success/times * 100).toFixed(2), 
+            math.mean(results).toFixed(2), 
+            math.std(results).toFixed(2),
+        (successBonus/(times/2)*100).toFixed(2), 
+            math.mean(bonuses).toFixed(2), 
+            math.std(bonuses).toFixed(2)
     ]
 }
 
-showStats = (p, n, b) => {
-    return 'Chances de sucesso\nPenalidade: '+p+'%\nNormal: '+n+'%\nBônus: '+b+'%'
+showStats = (stats) => {
+    let resp = '\nChances de sucesso\n'
+    resp+= 'Pen: '+stats[0]+'% Méd: '+stats[1]+' Var: '+stats[2]+'\n'
+    resp+= 'Nor: '+stats[3]+'% Méd: '+stats[4]+' Var: '+stats[5]+'\n'
+    resp+= 'Bon: '+stats[6]+'% Méd: '+stats[7]+' Var: '+stats[8]+'\n'
+    return resp    
 }
 
 validate = content => {
@@ -183,8 +191,8 @@ validate = content => {
             return throwNDices(at, dif, masterpiece)
         }
         else{
-            const [p, n, b] = getStats(at, dif, masterpiece)
-            return showStats(p, n, b)
+            const stats = getStats(at, dif, masterpiece)
+            return showStats(stats)
         }
     }
 }
