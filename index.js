@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.wR9p2s7pmRT4n3ZGo2zElVWRt0M'
+const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.-4W3s'
 const math = require('mathjs')
 const bot = new Discord.Client()
 
@@ -67,14 +67,14 @@ throwDice = (attribute, masterpiece) => {
 }
 
 showSimple = (number, dice, result, sum) => {
-    return number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'
+    return '\n'+number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'
 }
 
 showSimple2 = (
     number, dice, result, sum,
     number2, dice2, result2, sum2    
 ) => {
-    return number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'+number2+'d'+dice2+' - '+result2+'\nResultado: '+sum2
+    return '\n'+number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'+number2+'d'+dice2+' - '+result2+'\nResultado: '+sum2
 }
 
 throwNDices = (at, dif, masterpiece) => {
