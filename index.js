@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const token = ''
+const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.DTCghPofF4YEln_2Qo8P5vDCeeY'
 
 const bot = new Discord.Client()
 bot.login(token)
@@ -66,7 +66,7 @@ throwDice = (attribute, masterpiece) => {
 }
 
 showSimple = (number, dice, result, sum) => {
-    return number+'d'+dice+' - '+result+'\nResultado: '+sum
+    return number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'
 }
 
 showSimple2 = (
@@ -74,6 +74,19 @@ showSimple2 = (
     number2, dice2, result2, sum2    
 ) => {
     return number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'+number2+'d'+dice2+' - '+result2+'\nResultado: '+sum2
+}
+
+throwNDices = (at, dif, masterpiece) => {
+    let allResults = []
+    for(let i=0; i<dif; i++){
+        const result = throwDice(at, masterpiece)
+        allResults.push(result)
+    }
+    let msg = ''
+    allResults.forEach(row => {
+        msg += showSimple(row[0], row[1], row[2], row[3])
+    })
+    return msg
 }
 
 getStats = (at, dif, masterpiece) => {
@@ -165,10 +178,15 @@ validate = content => {
         if(content.includes('o')){
             masterpiece = true
         }
-        const [p, n, b] = getStats(at, dif, masterpiece)
-        return showStats(p, n, b)
+
+        if(content.includes('.')){
+            return throwNDices(at, dif, masterpiece)
+        }
+        else{
+            const [p, n, b] = getStats(at, dif, masterpiece)
+            return showStats(p, n, b)
+        }
     }
-    return 'Li aqui e tem: '+s1.length
 }
 
 bot.on('message', msg => {
