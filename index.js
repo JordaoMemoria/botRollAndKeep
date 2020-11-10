@@ -1,11 +1,64 @@
 const Discord = require('discord.js')
-const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw.-4W3s'
+const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw'
 const math = require('mathjs')
 const bot = new Discord.Client()
 
 bot.login(token)
+
 bot.on('ready', _ => {
-    console.log('[Bot Online]')
+    console.log('[Bot online]')
+    // Ouvindo os sinos do Karma
+    // Ouvindo os sinos do Dharma
+    // Ouvindo sons no fim do túnel
+    // Ouvindo mestre nerfar jogadores
+
+    // Assistindo Desbravadores
+    // Assistindo o Circo Pegar Fogo
+    // Assistindo uma chacina 
+    // Assintindo um elfo maneta
+    // Assitindo um elfo budejando
+    // Assistindo um monge sujar as mãos
+    // Assistindo um lobisomem depressivo
+    // Assitindo um dragão alcólatra
+    // Assitindo um dragão comendo cola
+    // Assitindo um monge comendo cola
+    // Assitindo um demônio abandonando todos
+
+    // Jogando contra a morte
+    // Jogando a favor da vida
+    // Jogando Desbravadores
+    // Jogando Merda no Ventilador
+    // Jogando Convicção para não morrer
+
+    let activities = [
+        {title:'os sinos do Karma', type:'LISTENING'},
+        {title:'os sinos do Dharma', type:'LISTENING'},
+        {title:'sons no fim do túnel', type:'LISTENING'},
+        {title:'mestre nerfar jogadores', type:'LISTENING'},
+
+        {title:'Desbravadores', type:'WATCHING'},
+        {title:'o Circo Pegar Fogo', type:'WATCHING'},
+        {title:'uma chacina', type:'WATCHING'},
+        {title:'um elfo maneta', type:'WATCHING'},
+        {title:'um elfo budejando', type:'WATCHING'},
+        {title:'um monge sujar as mãos', type:'WATCHING'},
+        {title:'um lobisomem depressivo', type:'WATCHING'},
+        {title:'um dragão alcólatra', type:'WATCHING'},
+        {title:'um dragão comendo cola', type:'WATCHING'},
+        {title:'um monge comendo cola', type:'WATCHING'},
+        {title:'um demônio abandonando todos', type:'WATCHING'},
+
+        {title:'contra a morte', type:'PLAYING'},
+        {title:'a favor da vida', type:'PLAYING'},
+        {title:'Desbravadores', type:'PLAYING'},
+        {title:'Merda no Ventilador', type:'PLAYING'},
+        {title:'Convicção para não morrer', type:'PLAYING'}
+    ]
+
+    setInterval(_ => {
+        let value = Math.floor(Math.random() * activities.length)
+        bot.user.setActivity(activities[value].title, { type: activities[value].type })
+    },900*1000)
 })
 
 throwDice = (attribute, masterpiece) => {
