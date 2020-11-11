@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const token = 'NzUzNzU2MjM4ODM5NTQ1OTI2.X1q0Mw'
+const {token} = require('./.env')
 const math = require('mathjs')
 const bot = new Discord.Client()
 
@@ -7,58 +7,7 @@ bot.login(token)
 
 bot.on('ready', _ => {
     console.log('[Bot online]')
-    // Ouvindo os sinos do Karma
-    // Ouvindo os sinos do Dharma
-    // Ouvindo sons no fim do túnel
-    // Ouvindo mestre nerfar jogadores
-
-    // Assistindo Desbravadores
-    // Assistindo o Circo Pegar Fogo
-    // Assistindo uma chacina 
-    // Assintindo um elfo maneta
-    // Assitindo um elfo budejando
-    // Assistindo um monge sujar as mãos
-    // Assistindo um lobisomem depressivo
-    // Assitindo um dragão alcólatra
-    // Assitindo um dragão comendo cola
-    // Assitindo um monge comendo cola
-    // Assitindo um demônio abandonando todos
-
-    // Jogando contra a morte
-    // Jogando a favor da vida
-    // Jogando Desbravadores
-    // Jogando Merda no Ventilador
-    // Jogando Convicção para não morrer
-
-    let activities = [
-        {title:'os sinos do Karma', type:'LISTENING'},
-        {title:'os sinos do Dharma', type:'LISTENING'},
-        {title:'sons no fim do túnel', type:'LISTENING'},
-        {title:'mestre nerfar jogadores', type:'LISTENING'},
-
-        {title:'Desbravadores', type:'WATCHING'},
-        {title:'o Circo Pegar Fogo', type:'WATCHING'},
-        {title:'uma chacina', type:'WATCHING'},
-        {title:'um elfo maneta', type:'WATCHING'},
-        {title:'um elfo budejando', type:'WATCHING'},
-        {title:'um monge sujar as mãos', type:'WATCHING'},
-        {title:'um lobisomem depressivo', type:'WATCHING'},
-        {title:'um dragão alcólatra', type:'WATCHING'},
-        {title:'um dragão comendo cola', type:'WATCHING'},
-        {title:'um monge comendo cola', type:'WATCHING'},
-        {title:'um demônio abandonando todos', type:'WATCHING'},
-
-        {title:'contra a morte', type:'PLAYING'},
-        {title:'a favor da vida', type:'PLAYING'},
-        {title:'Desbravadores', type:'PLAYING'},
-        {title:'Merda no Ventilador', type:'PLAYING'},
-        {title:'Convicção para não morrer', type:'PLAYING'}
-    ]
-
-    setInterval(_ => {
-        let value = Math.floor(Math.random() * activities.length)
-        bot.user.setActivity(activities[value].title, { type: activities[value].type })
-    },900*1000)
+    bot.user.setActivity('.tutorial', { type: 'LISTENING' })
 })
 
 throwDice = (attribute, masterpiece) => {
@@ -205,7 +154,35 @@ showStats = (stats) => {
     return resp    
 }
 
+tutorial = _ => {
+    let tutorial = ''
+    tutorial += '\nBem vindo ao tutorial!\n\n'
+
+    tutorial += '>> Para fazer um teste digite o valor do atributo.\n'
+    tutorial += 'Exemplo: "12" "15" "9"\n\n'
+
+    tutorial += '>> Para fazer um teste com bônus ou penalidade digite o atributo mais "p" ou "b".\n'
+    tutorial += 'Exemplo: "8b" "10p"\n\n'
+
+    tutorial += '>> Para fazer um teste com uma arma obra-prima digite o atributo mais "o".\n'
+    tutorial += 'Exemplo: "11o" "13o"\n\n'
+
+    tutorial += '>> É possível combinar uma arma obra-prima com penalidade ou bônus.\n'
+    tutorial += 'Exemplo: "14op" "16ob" "17po" "18bo"\n\n'
+
+    tutorial += '>> Para testar múltiplas vezes digite o atributo, número de vezes seguido de "."\n'
+    tutorial += 'Exemplo: "14 3." "15 4." "14 5." "15 6."\n\n'
+
+    tutorial += '>> É possível também calcular a probabilidade de um atributo A ter sucesso em uma dificuldade D, podendo incluir ou não uma arma obra-prima. Os resultados são calculados com Penalidade, Normal, e com Bônus. A Média e o Desvio Padrão também são mostrados.\n'
+    tutorial += 'Exemplo: "9 9" "10 12" "15 17" "12o 13"\n\n'
+
+    return tutorial
+}
+
 validate = content => {
+    if(content === '.tutorial'){
+        return tutorial()
+    }
     const s1 = content.split(' ')
     if(s1.length > 2){
         return null
