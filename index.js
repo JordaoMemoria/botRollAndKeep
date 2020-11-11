@@ -7,7 +7,7 @@ bot.login(token)
 
 bot.on('ready', _ => {
     console.log('[Bot online]')
-    bot.user.setActivity('.tutorial', { type: 'LISTENING' })
+    bot.user.setActivity('.tutorial (Forjado por Akilis Wokai)', { type: 'LISTENING' })
 })
 
 throwDice = (attribute, masterpiece) => {
