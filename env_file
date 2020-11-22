@@ -1,4 +1,0 @@
-// renomear para .env
-module.exports = {
-    token:''
-}

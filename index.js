@@ -1,7 +1,67 @@
 const Discord = require('discord.js')
 const {token} = require('./.env')
-const math = require('mathjs')
 const bot = new Discord.Client()
+const Character = require('./Character')
+const Dices = require('./Dices')
+const Out = require('./Out')
+
+let c = null
+let characters = {
+    'ak':new Character({
+        nome:'Aklis',
+        sigla:'ak',
+        ataque:'15',
+        dano:15,
+        tipo:'Perto',
+        defesa:18,
+        limiar:16,
+        vitalidade:15,
+        resistencia:68,
+        esquiva:3,
+        bloqueia:false,
+        apara:true,
+        aparaProjeteis:true,
+        tolera:true,
+        rolamento:true,
+        corpo:14
+    }),
+    'az':new Character({
+        nome:'Azuiu',
+        sigla:'az',
+        ataque:'17',
+        dano:21,
+        tipo:'Longe',
+        defesa:15,
+        limiar:9,
+        vitalidade:15,
+        resistencia:53,
+        esquiva:6,
+        bloqueia:false,
+        apara:false,
+        aparaProjeteis:false,
+        tolera:false,
+        rolamento:false,
+        corpo:14
+    }),
+    'za':new Character({
+        nome:'Zarask',
+        sigla:'za',
+        ataque:'14',
+        dano:6,
+        tipo:'Perto',
+        defesa:20,
+        limiar:13,
+        vitalidade:15,
+        resistencia:68,
+        esquiva:0,
+        bloqueia:true,
+        apara:false,
+        aparaProjeteis:false,
+        tolera:false,
+        rolamento:false,
+        corpo:13
+    })
+}
 
 bot.login(token)
 
@@ -13,180 +73,142 @@ bot.on('ready', _ => {
     )
 })
 
-throwDice = (attribute, masterpiece) => {
-    matrix = [
-        [0,1,1],
-        [1,1,2],
-        [2,1,4],
-        [3,1,6],
-        [4,1,8],
-        [5,1,10],
-        [6,1,12],
-        [7,2,6],
-        [8,2,8],
-        [9,3,6],
-        [10,2,10],
-        [11,2,12],
-        [12,3,8],
-        [13,4,6],
-        [14,3,10],
-        [15,5,6],
-        [16,4,8],
-        [17,3,12],
-        [18,6,6],
-        [19,4,10],
-        [20,7,6],
-        [21,4,12],
-        [22,6,8],
-        [23,8,6],
-        [24,5,10],
-        [25,7,8],
-        [26,5,12],
-        [27,6,10],
-        [28,8,8],
-        [29,7,10],
-        [30,6,12],
-        [31,8,10],
-        [32,7,12],
-        [33,9,10],
-        [34,8,12],
-        [35,10,10],
-        [36,9,12],
-        [37,11,10],
-        [38,10,12],
-        [39,12,10],
-    ]
-    const number = matrix[attribute][1]
-    const dice = matrix[attribute][2]
-    let result = []
-    let sum = 0
-    for(let i=0; i<number; i++){
-        let value = Math.floor(Math.random() * dice) + 1
-        if(value === 1 && masterpiece){
-            value = Math.floor(Math.random() * dice) + 1
-        }
-        sum += value
-        result.push(value)
+newCharacter = _ => {
+    c = new Character()
+    return 'Digite o nome do personagem:'
+}
+
+ignoreOwnMessages = content => {
+    if(
+        content === 'Digite o nome do personagem:' ||
+        content === 'Digite a sigla de 2 ou 3 letras para se referir ao personagem futuramente:' ||
+        content === 'Digite o dado-base de ataque considerando atributo, pericia, itens e outros. Acrescente "o" caso esteja utilizando arma obra prima:' ||
+        content === 'Digite o dano da arma, tecnica ou magia mais usada:' ||
+        content === 'Escolha 1 dentre os tipos de dano (Perto, Longe, Magia):' ||
+        content === 'Digite a defesa:' ||
+        content === 'Digite o limiar:' ||
+        content === 'Digite a vitalidade:' ||
+        content === 'Digite a resistência:' ||
+        content === 'Digite a esquiva. Digite 0 caso não possua:' ||
+        content === 'O personagem tem escudo para bloquear todo tipo dano (Perto, Longe, Magia)? Responda com "S" ou "N":' ||
+        content === 'O personagem consegue aparar ataques de Perto? Responda com "S" ou "N":' ||
+        content === 'O personagem sabe executar um rolamento? Responda com "S" ou "N":' ||
+        content === 'Digite o atributo corpo:' ||
+        content === 'O personagem consegue aparar ataques de Longe? Responda com "S" ou "N":' ||
+        content === 'O personagem consegue tolerar dano? Responda com "S" ou "N":' ||
+        content === 'Você respondeu incorretamente. Comece de novo.' ){
+        return true
     }
-    return [number, dice, result, sum]
+    return false
 }
 
-showSimple = (number, dice, result, sum) => {
-    return '\n'+number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'
-}
-
-showSimple2 = (
-    number, dice, result, sum,
-    number2, dice2, result2, sum2    
-) => {
-    return '\n'+number+'d'+dice+' - '+result+'\nResultado: '+sum+'\n'+number2+'d'+dice2+' - '+result2+'\nResultado: '+sum2
-}
-
-throwNDices = (at, dif, masterpiece) => {
-    let allResults = []
-    for(let i=0; i<dif; i++){
-        const result = throwDice(at, masterpiece)
-        allResults.push(result)
-    }
-    let msg = ''
-    allResults.forEach(row => {
-        msg += showSimple(row[0], row[1], row[2], row[3])
+newClone = (c, sigla) => {
+    characters[sigla] = new Character({
+        nome:c.nome,
+        sigla,
+        ataque:c.ataque,
+        dano:c.dano,
+        tipo:c.tipo,
+        defesa:c.defesa,
+        limiar:c.limiar,
+        vitalidade:c.vitalidade,
+        resistencia:c.resistencia,
+        esquiva:c.esquiva,
+        bloqueia:c.bloqueia,
+        apara:c.apara,
+        aparaProjeteis:c.aparaProjeteis,
+        tolera:c.tolera,
+        rolamento:c.rolamento,
+        corpo:c.corpo
     })
-    return msg
-}
-
-getStats = (at, dif, masterpiece) => {
-    let results = []
-    let lastResult = 0
-    let penalties = []
-    let bonuses = []
-    let success = 0
-    let successBonus = 0
-    let successPenalty = 0
-
-    const times = 1000000
-
-    for(let i=0; i<times; i++){
-        const sum = throwDice(at,masterpiece)[3]
-        if(sum >= dif){
-            success++
-        }
-        if(i%2 !== 0){
-            if(sum > lastResult){
-                bonuses.push(sum)
-                penalties.push(lastResult)
-                if(sum >= dif){
-                    successBonus++
-                }
-                if(lastResult >= dif){
-                    successPenalty++
-                }
-            }
-            else{
-                bonuses.push(lastResult)
-                penalties.push(sum)
-                if(lastResult >= dif){
-                    successBonus++
-                }
-                if(sum >= dif){
-                    successPenalty++
-                }
-            }
-        }
-        lastResult = sum
-        results.push(sum)
-    }
-    return [
-        (successPenalty/(times/2)*100).toFixed(2), 
-            math.mean(penalties).toFixed(2), 
-            math.std(penalties).toFixed(2),
-        (success/times * 100).toFixed(2), 
-            math.mean(results).toFixed(2), 
-            math.std(results).toFixed(2),
-        (successBonus/(times/2)*100).toFixed(2), 
-            math.mean(bonuses).toFixed(2), 
-            math.std(bonuses).toFixed(2)
-    ]
-}
-
-showStats = (stats) => {
-    let resp = '\nChances de sucesso\n'
-    resp+= 'Pen: '+stats[0]+'% Méd: '+stats[1]+' Var: '+stats[2]+'\n'
-    resp+= 'Nor: '+stats[3]+'% Méd: '+stats[4]+' Var: '+stats[5]+'\n'
-    resp+= 'Bon: '+stats[6]+'% Méd: '+stats[7]+' Var: '+stats[8]+'\n'
-    return resp    
-}
-
-tutorial = _ => {
-    let tutorial = ''
-    tutorial += '\nBem vindo ao tutorial!\n\n'
-
-    tutorial += '>> Para fazer um teste digite o valor do atributo.\n'
-    tutorial += 'Exemplo: "12" "15" "9"\n\n'
-
-    tutorial += '>> Para fazer um teste com bônus ou penalidade digite o atributo mais "p" ou "b".\n'
-    tutorial += 'Exemplo: "8b" "10p"\n\n'
-
-    tutorial += '>> Para fazer um teste com uma arma obra-prima digite o atributo mais "o".\n'
-    tutorial += 'Exemplo: "11o" "13o"\n\n'
-
-    tutorial += '>> É possível combinar uma arma obra-prima com penalidade ou bônus.\n'
-    tutorial += 'Exemplo: "14op" "16ob" "17po" "18bo"\n\n'
-
-    tutorial += '>> Para testar múltiplas vezes digite o atributo, número de vezes seguido de "."\n'
-    tutorial += 'Exemplo: "14 3." "15 4." "14 5." "15 6."\n\n'
-
-    tutorial += '>> É possível também calcular a probabilidade de um atributo A ter sucesso em uma dificuldade D, podendo incluir ou não uma arma obra-prima. Os resultados são calculados com Penalidade, Normal, e com Bônus. A Média e o Desvio Padrão também são mostrados.\n'
-    tutorial += 'Exemplo: "9 9" "10 12" "15 17" "12o 13"\n\n'
-
-    return tutorial
+    return 'Personagem clonado com a sigla '+sigla
 }
 
 validate = content => {
+    if(ignoreOwnMessages(content)){
+        return null
+    }
+    if(c !== null){
+        if(c.nome === ''){
+            return c.setName(content)
+        }
+        if(c.sigla === ''){
+            return c.setSigla(content)
+        }
+        if(c.ataque === ''){
+            return c.setAtaque(content)
+        }
+        if(c.dano === 0){
+            return c.setDano(content)
+        }
+        if(c.tipo === ''){
+            return c.setTipo(content)
+        }
+        if(c.defesa === 0){
+            return c.setDefesa(content)
+        }
+        if(c.limiar === 0){
+            return c.setLimiar(content)
+        }
+        if(c.vitalidade === 0){
+            return c.setVitalidade(content)
+        }
+        if(c.resistencia === 0){
+            return c.setResistencia(content)
+        }
+        if(c.esquiva === -1){
+            return c.setEsquiva(content)
+        }
+        if(c.bloqueia === null){
+            return c.setBloqueia(content)
+        }
+        if(c.apara === null){
+            return c.setApara(content)
+        }
+        if(c.aparaProjeteis === null){
+            return c.setAparaPro(content)
+        }
+        if(c.tolera === null){
+            return c.setTolera(content)
+        }
+        if(c.rolamento === null){
+            return c.setRolamento(content)
+        }
+        if(c.corpo === 0){
+            const msg = c.setCorpo(content)
+            characters[c.sigla] = c
+            return msg
+        }
+    }
     if(content === '.tutorial'){
-        return tutorial()
+        return Out.tutorial()
+    }
+    if(content === 'Nova ficha' || content === 'Ficha nova'){
+        return newCharacter()
     }
     const s1 = content.split(' ')
+    if(s1.length === 4 && s1[0] === 'E'){
+        if(s1[1] in characters){
+            return characters[s1[1]].edit(s1[2], s1[3])
+        }
+        else{
+            return 'Ficha não encontrada'
+        }
+    }
+    if(s1.length === 3){
+        if(s1[0].toLowerCase() in characters && s1[1] in characters && s1[2] === 'b'){
+            return characters[s1[0].toLowerCase()].novoAtaque(characters[s1[1]], 'b')
+        }
+        if(s1[0].toLowerCase() in characters && s1[1] in characters && s1[2] === 'p'){
+            return characters[s1[0].toLowerCase()].novoAtaque(characters[s1[1]], 'p')
+        }
+        if(s1[0].toLowerCase() === 'clone' && s1[1] in characters){
+            return newClone(characters[s1[1]], s1[2])
+        }
+        if(s1[0].toLowerCase() === 'clone' && !(s1[1]  in characters)){
+            return 'Ficha não encontrada'
+        }
+    }
     if(s1.length > 2){
         return null
     }
@@ -195,21 +217,20 @@ validate = content => {
         if(isNaN(at)){
             return null
         }
-        let masterpiece = false
-        if(content.includes('o')){
-            masterpiece = true
-        }
-        const [number, dice, result, sum] = throwDice(at,masterpiece)
-        if(content.includes('p') || content.includes('b')){
-            const [number2, dice2, result2, sum2] = throwDice(at,masterpiece)
-            return showSimple2(
-                number, dice, result, sum,
-                number2, dice2, result2, sum2
-            )
-        }
-        return showSimple(number, dice, result, sum)
+        return Dices.simpleTest(at, content)
     }
     else if(s1.length === 2){
+        if(s1[0].toLowerCase() in characters && s1[1] in characters){
+            return characters[s1[0].toLowerCase()].novoAtaque(characters[s1[1]], 'Normal')
+        }
+        if(s1[0] === 'Ver'){
+            if(s1[1] in characters){
+                return characters[s1[1]].show()
+            }
+            else{
+                return 'Ficha não encontrada'
+            }
+        }
         const at = parseInt(s1[0])
         const dif = parseInt(s1[1])
         if(isNaN(at) || isNaN(dif)){
@@ -221,11 +242,11 @@ validate = content => {
         }
 
         if(content.includes('.')){
-            return throwNDices(at, dif, masterpiece)
+            return Dices.throwNDices(at, dif, masterpiece)
         }
         else{
-            const stats = getStats(at, dif, masterpiece)
-            return showStats(stats)
+            const stats = Dices.getStats(at, dif, masterpiece)
+            return Out.showStats(stats)
         }
     }
 }
@@ -233,6 +254,8 @@ validate = content => {
 bot.on('message', msg => {
     const resp = validate(msg.content)
     if(resp !== null){
-        msg.reply(resp)
+        // msg.reply(resp)
+        msg.channel.send(resp)
+        //msg.send(resp)
     }
 })
