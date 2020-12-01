@@ -1,8 +1,10 @@
 const Discord = require('discord.js')
-const {token} = require('./.env')
+// const {token} = require('./.env')
 const bot = new Discord.Client()
 const Dices = require('./Dices')
 const Out = require('./Out')
+const token = process.env.TOKEN
+
 
 bot.login(token)
 
